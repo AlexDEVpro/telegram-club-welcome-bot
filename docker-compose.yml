@@ -1,0 +1,18 @@
+services:
+  app:
+    container_name: welcome-bot
+  
+    build: ./
+
+    restart: always
+
+    environment:
+      - TelegramOptions__BotToken=${TELEGRAM_BOT_TOKEN}
+      - TelegramOptions__AdminIDs__0=${ADMIN_ID_1}
+      - TelegramOptions__AdminIDs__1=${ADMIN_ID_2}
+      - TelegramOptions__DevNotifierTimeoutSec=${DEV_NOTIFIER_TIMEOUT_SEC}
+      - WelcomeOptions__Culture=${CULTURE}
+      - WelcomeOptions__WelcomeRepeatCooldownMin=${WELCOME_REPEAT_COOLDOWN_MIN}
+
+    volumes:
+      - ./Data:/app/Data

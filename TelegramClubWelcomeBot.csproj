@@ -1,0 +1,49 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <DockerfileContext>.</DockerfileContext>
+    <UserSecretsId>a57f4164-6e1a-42e6-a66f-219643e94da0</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MediatR" Version="14.1.0" />
+	<PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.8" />
+	<PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
+    <PackageReference Include="Telegram.Bot" Version="22.10.0.1" />
+  </ItemGroup>
+
+	<ItemGroup>
+		<Compile Update="Resources\BotMessages.Designer.cs">
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>BotMessages.resx</DependentUpon>
+		</Compile>
+	</ItemGroup>
+
+	<ItemGroup>
+		<EmbeddedResource Update="Resources\BotMessages.resx">
+			<Generator>ResXFileCodeGenerator</Generator>
+			<LastGenOutput>BotMessages.Designer.cs</LastGenOutput>
+		</EmbeddedResource>
+	</ItemGroup>
+
+	<ItemGroup>
+    <None Update="appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+	<ItemGroup>
+	  <EditorConfigFiles Remove="C:\Users\alex_t7nq6oy\Documents\Codex\2026-06-26\are-you-able-to-see-my\work\telegram-club-welcome-bot\.editorconfig" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Include="C:\Users\alex_t7nq6oy\Documents\Codex\2026-06-26\are-you-able-to-see-my\work\telegram-club-welcome-bot\.editorconfig" />
+	</ItemGroup>
+
+</Project>
