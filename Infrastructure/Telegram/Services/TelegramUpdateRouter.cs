@@ -46,6 +46,8 @@ internal class TelegramUpdateRouter
             return;
 
         var msg = update.Message;
+        if (msg.Text == null)
+            return;
 
         var chatId = msg.Chat.Id;
 
@@ -65,7 +67,7 @@ internal class TelegramUpdateRouter
         using (_cultureContextManager.Use(_userCultureResolver.Resolve(from.LanguageCode)))
         {
             // Cancel command.
-            if (msg.Text == $"/{BotCommands.Cancel}")
+            if (msg.Text.StartsWith($"/{BotCommands.Cancel}"))
             {
                 _states.Remove(
                     chatId,
@@ -96,7 +98,7 @@ internal class TelegramUpdateRouter
             }
 
             // Add welcome command.
-            if (msg.Text == $"/{BotCommands.AddWelcome}")
+            if (msg.Text.StartsWith($"/{BotCommands.AddWelcome}"))
             {
                 await _mediator.Send(
                     new StartAddWelcomeCommand(
