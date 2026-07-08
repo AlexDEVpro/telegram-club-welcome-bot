@@ -1,4 +1,6 @@
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using Newtonsoft.Json.Serialization;
 
 using TelegramClubWelcomeBot.Infrastructure.Persistence.Models;
 
@@ -6,6 +8,12 @@ internal class StorageService
 {
     private readonly string _dataPath;
     private readonly object _lock = new();
+
+    private static JsonSerializerSettings JsonSettings => new()
+    {
+        StringEscapeHandling = StringEscapeHandling.Default, // Keep emojis and special characters as is.
+        Converters = [new StringEnumConverter(new SnakeCaseNamingStrategy())] // Telegram entities support.
+    };
 
     public BotData Data { get; private set; }
 
@@ -43,11 +51,7 @@ internal class StorageService
             JsonConvert.SerializeObject(
                 Data,
                 Formatting.Indented,
-                new JsonSerializerSettings
-                {
-                    StringEscapeHandling =
-                        StringEscapeHandling.Default // Keep emojis and special characters as is.
-                }));
+                JsonSettings));
         }
     }
 
@@ -57,7 +61,8 @@ internal class StorageService
             return new BotData();
 
         var data = JsonConvert.DeserializeObject<BotData>(
-            File.ReadAllText(_dataPath));
+            File.ReadAllText(_dataPath),
+            JsonSettings);
 
         return data ?? new BotData();
     }
