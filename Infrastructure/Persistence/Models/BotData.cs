@@ -20,14 +20,14 @@ namespace TelegramClubWelcomeBot.Infrastructure.Persistence.Models
             set => _recentJoins = value;
         }
 
-        public void AddWelcome(Welcome welcome)
+        public void AddWelcome(long chatId, Welcome welcome)
         {
             if (!WelcomesByChatId.TryGetValue(
-            welcome.ChatId,
+            chatId,
             out var welcomes))
             {
                 welcomes = [];
-                WelcomesByChatId[welcome.ChatId] = welcomes;
+                WelcomesByChatId[chatId] = welcomes;
             }
 
             welcomes.Add(welcome);

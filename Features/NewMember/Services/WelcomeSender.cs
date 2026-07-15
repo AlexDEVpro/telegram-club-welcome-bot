@@ -108,6 +108,7 @@ internal class WelcomeSender
                 catch (Exception inner)
                 {
                     await _devNotifier.Notify(
+                        chatId,
                         welcome,
                         inner.ToString());
                 }
@@ -115,6 +116,7 @@ internal class WelcomeSender
             else
             {
                 await _devNotifier.Notify(
+                    chatId,
                     welcome,
                     ex.ToString());
             }
@@ -179,7 +181,7 @@ internal class WelcomeSender
                                     MessageId = joinMessageId
                                 })),
 
-                _ => await HandleUnsupportedType(welcome)
+                _ => await HandleUnsupportedType(chatId, welcome)
             };
         }
         else
@@ -224,7 +226,7 @@ internal class WelcomeSender
                             MessageId = joinMessageId
                         }),
 
-                _ => await HandleUnsupportedType(welcome)
+                _ => await HandleUnsupportedType(chatId, welcome)
             };
         }
     }
@@ -272,11 +274,13 @@ internal class WelcomeSender
     }
 
     private async Task<Message> HandleUnsupportedType(
+        long chatId,
         Welcome welcome)
     {
         var errorMessage = $"Unhandled welcome type: {welcome.Type}.";
 
         await _devNotifier.Notify(
+            chatId,
             welcome,
             errorMessage);
 

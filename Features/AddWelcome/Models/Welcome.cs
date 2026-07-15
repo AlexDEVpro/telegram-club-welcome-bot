@@ -6,8 +6,6 @@ internal class Welcome
 {
     public required string Name { get; set; }
 
-    public required long ChatId { get; set; }
-
     public string? Url { get; set; }
 
     public string? FileId { get; set; }

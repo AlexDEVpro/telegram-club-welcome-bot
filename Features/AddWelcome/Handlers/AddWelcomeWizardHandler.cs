@@ -178,10 +178,9 @@ internal class AddWelcomeWizardHandler
             var type = state.Type
                 ?? throw new InvalidOperationException("Welcome type is not specified.");
 
-            _storage.Data.AddWelcome(new Welcome
+            _storage.Data.AddWelcome(state.ChatIdTarget, new Welcome
             {
                 Name = state.Name,
-                ChatId = state.ChatIdTarget,
                 Url = state.Url,
                 FileId = state.FileId,
                 Type = type,
