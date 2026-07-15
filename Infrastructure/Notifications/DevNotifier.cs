@@ -25,6 +25,7 @@ internal class DevNotifier
     }
 
     public Task Notify(
+        long chatId,
         Welcome welcome,
         string error)
     {
@@ -36,7 +37,7 @@ Name:
 {welcome.Name}
 
 Chat:
-{welcome.ChatId}
+{chatId}
 
 Message:
 {welcome.Message}
