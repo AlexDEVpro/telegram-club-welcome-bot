@@ -46,9 +46,6 @@ internal class TelegramUpdateRouter
             return;
 
         var msg = update.Message;
-        if (msg.Text == null)
-            return;
-
         var chatId = msg.Chat.Id;
 
         var from = msg.From;
@@ -66,21 +63,6 @@ internal class TelegramUpdateRouter
 
         using (_cultureContextManager.Use(_userCultureResolver.Resolve(from.LanguageCode)))
         {
-            // Cancel command.
-            if (msg.Text.StartsWith($"/{BotCommands.Cancel}"))
-            {
-                _states.Remove(
-                    chatId,
-                    from.Id);
-
-                await bot.SendMessage(
-                    chatId,
-                    Resources.BotMessages.Cancelled,
-                    disableNotification: true);
-
-                return;
-            }
-
             // New members joined.
             if (msg.NewChatMembers?.Any() == true)
             {
@@ -93,6 +75,24 @@ internal class TelegramUpdateRouter
                             joinedUser.Id,
                             joinedUser.FirstName));
                 }
+
+                return;
+            }
+
+            if (msg.Text == null)
+                return;
+
+            // Cancel command.
+            if (msg.Text.StartsWith($"/{BotCommands.Cancel}"))
+            {
+                _states.Remove(
+                    chatId,
+                    from.Id);
+
+                await bot.SendMessage(
+                    chatId,
+                    Resources.BotMessages.Cancelled,
+                    disableNotification: true);
 
                 return;
             }
