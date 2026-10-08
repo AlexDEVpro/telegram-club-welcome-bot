@@ -53,17 +53,6 @@ internal class WelcomeSender
 
             existing.JoinedAtUtc = now;
         }
-        else
-        {
-            _storage.Data.RecentJoins.Add(new RecentJoin
-            {
-                ChatId = chatId,
-                UserId = joinedUserId,
-                JoinedAtUtc = now
-            });
-        }
-
-        _storage.Save();
 
         var welcomes = _storage.Data.GetWelcomes(chatId);
         if (!welcomes.Any())
@@ -121,6 +110,14 @@ internal class WelcomeSender
                     ex.ToString());
             }
         }
+
+        _storage.Data.RecentJoins.Add(new RecentJoin
+        {
+            ChatId = chatId,
+            UserId = joinedUserId,
+            JoinedAtUtc = now
+        });
+        _storage.Save();
     }
 
     private async Task<Message> SendMedia(
