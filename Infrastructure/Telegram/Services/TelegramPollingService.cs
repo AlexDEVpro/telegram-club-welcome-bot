@@ -39,6 +39,8 @@ internal class TelegramPollingService : BackgroundService
                         receiverCts),
                 cancellationToken: receiverCts.Token);
 
+            Console.WriteLine("Connected to Telegram.");
+
             try
             {
                 await Task.Delay(
