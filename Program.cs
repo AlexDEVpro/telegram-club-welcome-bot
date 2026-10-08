@@ -48,6 +48,7 @@ class Program
         builder.Services.AddSingleton<DevNotifier>();
 
         builder.Services.AddHostedService<SetBotCommandsService>();
+        builder.Services.AddHostedService<TelegramPollingService>();
 
         // Telegram client.
         builder.Services.AddSingleton<ITelegramBotClient>(provider =>
@@ -77,11 +78,6 @@ class Program
         // Data init.
         var storage = host.Services.GetRequiredService<StorageService>();
         storage.CleanupRecentJoins(welcomeOptions.WelcomeRepeatCooldownMin);
-
-        // Bot start.
-        var bot = host.Services.GetRequiredService<ITelegramBotClient>();
-        var router = host.Services.GetRequiredService<TelegramUpdateRouter>();
-        bot.StartReceiving(router.Update, router.Error);
 
         Console.WriteLine($"Bot started with culture: {culture.Name}");
 
