@@ -88,13 +88,22 @@ Message:
     {
         foreach (var adminId in _options.AdminIDs)
         {
-            using var cts = new CancellationTokenSource(
-                    _timeout);
+            try
+            {
+                using var cts = new CancellationTokenSource(_timeout);
 
-            await _bot.SendMessage(
-                adminId,
-                text,
-                cancellationToken: cts.Token);
+                await _bot.SendMessage(
+                    adminId,
+                    text,
+                    cancellationToken: cts.Token);
+            }
+            catch (Exception ex)
+            {
+                Console.Error.WriteLine(
+                    $"Failed to notify admin {adminId}.\n" +
+                    $"Message: {text}\n" +
+                    $"Error: {ex}");
+            }
         }
     }
 }
