@@ -1,5 +1,4 @@
-﻿using System.Net;
-using System.Net.Http.Headers;
+﻿using System.Net.Http.Headers;
 
 using Microsoft.Extensions.Options;
 
@@ -15,6 +14,8 @@ namespace TelegramClubWelcomeBot.Features.NewMember.Services;
 
 internal class WelcomeSender
 {
+    const string WelcomeUserPlaceholder = "{user}";
+
     private readonly ITelegramBotClient _bot;
     private readonly StorageService _storage;
     private readonly DevNotifier _devNotifier;
@@ -34,7 +35,7 @@ internal class WelcomeSender
         _options = options.Value;
     }
 
-    public async Task Send(
+    public async Task<bool> Send(
         long chatId,
         int joinMessageId,
         long joinedUserId,
@@ -49,33 +50,27 @@ internal class WelcomeSender
         if (existing != null)
         {
             if (existing.JoinedAtUtc > cooldownBorder)
-                return;
-
-            existing.JoinedAtUtc = now;
+                return true;
         }
 
         var welcomes = _storage.Data.GetWelcomes(chatId);
-        if (!welcomes.Any())
-            return;
+        if (welcomes.Count == 0)
+            return false;
 
         var welcome = welcomes[Random.Shared.Next(welcomes.Count)];
-        var welcomeText = (welcome.Message ?? "")
-            .Replace("{user}", WebUtility.HtmlEncode(joinedUserFirstName));
+        var welcomeText = welcome.Message?.Replace(WelcomeUserPlaceholder, joinedUserFirstName);
         var useUrlFirst = string.IsNullOrWhiteSpace(welcome.FileId);
+
+        Message sendMediaResponse;
 
         try
         {
-            var msg = await SendMedia(
+            sendMediaResponse = await SendMedia(
                 chatId,
                 joinMessageId,
                 welcome,
                 welcomeText,
                 useUrlFirst);
-
-            if (useUrlFirst)
-            {
-                UpdateFileId(welcome, msg);
-            }
         }
         catch (Exception ex)
         {
@@ -85,14 +80,12 @@ internal class WelcomeSender
             {
                 try
                 {
-                    var msg = await SendMedia(
+                    sendMediaResponse = await SendMedia(
                         chatId,
                         joinMessageId,
                         welcome,
                         welcomeText,
                         true);
-
-                    UpdateFileId(welcome, msg);
                 }
                 catch (Exception inner)
                 {
@@ -100,6 +93,8 @@ internal class WelcomeSender
                         chatId,
                         welcome,
                         inner.ToString());
+
+                    return false;
                 }
             }
             else
@@ -108,23 +103,37 @@ internal class WelcomeSender
                     chatId,
                     welcome,
                     ex.ToString());
+
+                return false;
             }
         }
 
-        _storage.Data.RecentJoins.Add(new RecentJoin
+        UpdateFileId(welcome, sendMediaResponse);
+
+        if (existing == null)
         {
-            ChatId = chatId,
-            UserId = joinedUserId,
-            JoinedAtUtc = now
-        });
-        _storage.Save();
+            _storage.Data.RecentJoins.Add(new RecentJoin
+            {
+                ChatId = chatId,
+                UserId = joinedUserId,
+                JoinedAtUtc = now
+            });
+            _storage.Save();
+        }
+        else
+        {
+            existing.JoinedAtUtc = now;
+            _storage.Save();
+        }
+
+        return true;
     }
 
     private async Task<Message> SendMedia(
         long chatId,
         int joinMessageId,
         Welcome welcome,
-        string text,
+        string? text,
         bool useUrl = false)
     {
         if (useUrl)
@@ -293,15 +302,14 @@ internal class WelcomeSender
         Welcome welcome,
         Message msg)
     {
-        if (msg.Video != null)
-            welcome.FileId = msg.Video.FileId;
+        var fileId = msg.Video?.FileId
+            ?? msg.Animation?.FileId
+            ?? msg.Photo?.LastOrDefault()?.FileId;
 
-        if (msg.Photo != null)
-            welcome.FileId = msg.Photo.Last().FileId;
+        if (fileId == null || fileId == welcome.FileId)
+            return;
 
-        if (msg.Animation != null)
-            welcome.FileId = msg.Animation.FileId;
-
+        welcome.FileId = fileId;
         _storage.Save();
     }
 }

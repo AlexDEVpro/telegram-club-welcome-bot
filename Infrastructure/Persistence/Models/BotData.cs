@@ -7,6 +7,7 @@ namespace TelegramClubWelcomeBot.Infrastructure.Persistence.Models
     {
         private Dictionary<long, List<Welcome>>? _welcomesByChatId;
         private List<RecentJoin>? _recentJoins;
+        private List<PendingWelcome>? _pendingWelcomes;
 
         public Dictionary<long, List<Welcome>> WelcomesByChatId
         {
@@ -18,6 +19,12 @@ namespace TelegramClubWelcomeBot.Infrastructure.Persistence.Models
         {
             get => _recentJoins ??= [];
             set => _recentJoins = value;
+        }
+
+        public List<PendingWelcome> PendingWelcomes
+        {
+            get => _pendingWelcomes ??= [];
+            set => _pendingWelcomes = value;
         }
 
         public void AddWelcome(long chatId, Welcome welcome)

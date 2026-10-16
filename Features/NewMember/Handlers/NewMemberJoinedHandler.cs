@@ -8,19 +8,19 @@ namespace TelegramClubWelcomeBot.Features.NewMember.Handlers;
 internal class NewMemberJoinedHandler
 : IRequestHandler<NewMemberJoinedCommand>
 {
-    private readonly WelcomeSender _sender;
+    private readonly PendingWelcomeProcessor _processor;
 
     public NewMemberJoinedHandler(
-        WelcomeSender sender)
+        PendingWelcomeProcessor processor)
     {
-        _sender = sender;
+        _processor = processor;
     }
 
     public async Task Handle(
         NewMemberJoinedCommand request,
         CancellationToken cancellationToken)
     {
-        await _sender.Send(
+        await _processor.HandleJoin(
             request.ChatId,
             request.JoinMessageId,
             request.JoinedUserId,
