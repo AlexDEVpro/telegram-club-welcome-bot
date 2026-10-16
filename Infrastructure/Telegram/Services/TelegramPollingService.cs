@@ -3,6 +3,8 @@
 using Telegram.Bot;
 using Telegram.Bot.Exceptions;
 
+using TelegramClubWelcomeBot.Features.NewMember.Services;
+
 namespace TelegramClubWelcomeBot.Infrastructure.Telegram.Services;
 
 internal class TelegramPollingService : BackgroundService
@@ -12,18 +14,23 @@ internal class TelegramPollingService : BackgroundService
 
     private readonly ITelegramBotClient _bot;
     private readonly TelegramUpdateRouter _router;
+    private readonly PendingWelcomeProcessor _pendingWelcomeProcessor;
 
     public TelegramPollingService(
         ITelegramBotClient bot,
-        TelegramUpdateRouter router)
+        TelegramUpdateRouter router,
+        PendingWelcomeProcessor pendingWelcomeProcessor)
     {
         _bot = bot;
         _router = router;
+        _pendingWelcomeProcessor = pendingWelcomeProcessor;
     }
 
     protected override async Task ExecuteAsync(
         CancellationToken hostCt)
     {
+        await _pendingWelcomeProcessor.ProcessAll();
+
         while (!hostCt.IsCancellationRequested) // While host isn't stopping.
         {
             using var receiverCts =
