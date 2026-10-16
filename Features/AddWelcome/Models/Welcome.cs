@@ -1,5 +1,3 @@
-using Telegram.Bot.Types;
-
 namespace TelegramClubWelcomeBot.Features.AddWelcome.Models;
 
 internal class Welcome
@@ -13,6 +11,4 @@ internal class Welcome
     public required WelcomeType Type { get; set; }
 
     public required string Message { get; set; }
-
-    public List<MessageEntity>? Entities { get; set; }
 }

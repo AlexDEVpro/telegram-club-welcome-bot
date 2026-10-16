@@ -4,6 +4,7 @@ using Microsoft.Extensions.Options;
 
 using Telegram.Bot;
 using Telegram.Bot.Types;
+using Telegram.Bot.Types.Enums;
 
 using TelegramClubWelcomeBot.Features.AddWelcome.Models;
 using TelegramClubWelcomeBot.Features.NewMember.Models;
@@ -153,7 +154,7 @@ internal class WelcomeSender
                                 chatId,
                                 fileStream,
                                 caption: text,
-                                captionEntities: welcome.Entities,
+                                parseMode: ParseMode.Html,
                                 replyParameters: new ReplyParameters
                                 {
                                     MessageId = joinMessageId
@@ -167,7 +168,7 @@ internal class WelcomeSender
                                 chatId,
                                 fileStream,
                                 caption: text,
-                                captionEntities: welcome.Entities,
+                                parseMode: ParseMode.Html,
                                 replyParameters: new ReplyParameters
                                 {
                                     MessageId = joinMessageId
@@ -181,7 +182,7 @@ internal class WelcomeSender
                                 chatId,
                                 fileStream,
                                 caption: text,
-                                captionEntities: welcome.Entities,
+                                parseMode: ParseMode.Html,
                                 replyParameters: new ReplyParameters
                                 {
                                     MessageId = joinMessageId
@@ -204,7 +205,7 @@ internal class WelcomeSender
                         chatId,
                         welcome.FileId,
                         caption: text,
-                        captionEntities: welcome.Entities,
+                        parseMode: ParseMode.Html,
                         replyParameters: new ReplyParameters
                         {
                             MessageId = joinMessageId
@@ -215,7 +216,7 @@ internal class WelcomeSender
                         chatId,
                         welcome.FileId,
                         caption: text,
-                        captionEntities: welcome.Entities,
+                        parseMode: ParseMode.Html,
                         replyParameters: new ReplyParameters
                         {
                             MessageId = joinMessageId
@@ -226,7 +227,7 @@ internal class WelcomeSender
                         chatId,
                         welcome.FileId,
                         caption: text,
-                        captionEntities: welcome.Entities,
+                        parseMode: ParseMode.Html,
                         replyParameters: new ReplyParameters
                         {
                             MessageId = joinMessageId

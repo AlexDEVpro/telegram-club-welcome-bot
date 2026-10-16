@@ -170,8 +170,10 @@ internal class AddWelcomeWizardHandler
                 ?? request.Caption
                 ?? "";
 
-            var entities = request.Entities?.ToList()
-                ?? request.CaptionEntities?.ToList();
+            var entities = request.Entities?.ToArray()
+                ?? request.CaptionEntities?.ToArray();
+
+            var html = Telegram.Bot.Extensions.HtmlText.ToHtml(text, entities);
 
             if (state.Name == null)
                 throw new InvalidOperationException("Welcome name is not specified.");
@@ -184,8 +186,7 @@ internal class AddWelcomeWizardHandler
                 Url = state.Url,
                 FileId = state.FileId,
                 Type = type,
-                Message = text,
-                Entities = entities
+                Message = html
             });
             _storage.Save();
 
