@@ -25,15 +25,28 @@ internal class PendingWelcomeProcessor
         long userId,
         string firstName)
     {
-        var pending = new PendingWelcome
-        {
-            ChatId = chatId,
-            JoinMessageId = joinMessageId,
-            UserId = userId,
-            FirstName = firstName
-        };
+        var pending = _storage.Data.PendingWelcomes.FirstOrDefault(pw =>
+            pw.ChatId == chatId &&
+            pw.UserId == userId);
 
-        _storage.Data.PendingWelcomes.Add(pending);
+        if (pending is not null)
+        {
+            pending.JoinMessageId = joinMessageId;
+            pending.FirstName = firstName;
+        }
+        else
+        {
+            pending = new PendingWelcome
+            {
+                ChatId = chatId,
+                JoinMessageId = joinMessageId,
+                UserId = userId,
+                FirstName = firstName
+            };
+
+            _storage.Data.PendingWelcomes.Add(pending);
+        }
+
         _storage.Save();
 
         await Process(pending);
