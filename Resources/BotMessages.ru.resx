@@ -121,16 +121,16 @@
     <value>❌ Отменено</value>
   </data>
   <data name="SendWelcomeName" xml:space="preserve">
-    <value>🏷 Отправьте название приветствия</value>
+    <value>🏷 Отправьте ответ с названием приветствия</value>
   </data>
   <data name="NameAlreadyExists" xml:space="preserve">
     <value>❌ Такое название уже существует</value>
   </data>
   <data name="SendMedia" xml:space="preserve">
-    <value>📎 Отправьте URL или файл</value>
+    <value>📎 Отправьте ответ с URL или файлом</value>
   </data>
   <data name="SendMessage" xml:space="preserve">
-    <value>💬 Отправьте текст приветствия</value>
+    <value>💬 Отправьте ответ с текстом приветствия</value>
   </data>
   <data name="WelcomeCreated" xml:space="preserve">
     <value>✅ Приветствие создано</value>

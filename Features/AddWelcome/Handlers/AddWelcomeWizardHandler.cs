@@ -1,6 +1,7 @@
 ﻿using MediatR;
 
 using Telegram.Bot;
+using Telegram.Bot.Types;
 
 using TelegramClubWelcomeBot.Features.AddWelcome.Commands;
 using TelegramClubWelcomeBot.Features.AddWelcome.Models;
@@ -35,8 +36,14 @@ internal class AddWelcomeWizardHandler
         AddWelcomeWizardCommand request,
         CancellationToken cancellationToken)
     {
+        if (request.EphemeralMessageId == null)
+            return false;
+
         var chatId = request.ChatId;
         var fromUserId = request.FromUserId;
+        var ephemeralMessageParameters = new EphemeralMessageParameters { ReceiverUserId = fromUserId };
+        var replyParameters = new ReplyParameters { EphemeralMessageId = request.EphemeralMessageId };
+
 
         if (!_states.TryGet(chatId, fromUserId, out var state))
             return false;
@@ -53,6 +60,8 @@ internal class AddWelcomeWizardHandler
                 await _bot.SendMessage(
                     chatId,
                     Resources.BotMessages.SendWelcomeName,
+                    ephemeralMessageParameters: ephemeralMessageParameters,
+                    replyParameters: replyParameters,
                     disableNotification: true);
 
                 return true;
@@ -64,6 +73,8 @@ internal class AddWelcomeWizardHandler
                 await _bot.SendMessage(
                     chatId,
                     Resources.BotMessages.NameAlreadyExists,
+                    ephemeralMessageParameters: ephemeralMessageParameters,
+                    replyParameters: replyParameters,
                     disableNotification: true);
 
                 return true;
@@ -75,6 +86,8 @@ internal class AddWelcomeWizardHandler
             await _bot.SendMessage(
                 chatId,
                 Resources.BotMessages.SendMedia,
+                ephemeralMessageParameters: ephemeralMessageParameters,
+                replyParameters: replyParameters,
                 disableNotification: true);
 
             return true;
@@ -113,6 +126,8 @@ internal class AddWelcomeWizardHandler
                 await _bot.SendMessage(
                     chatId,
                     Resources.BotMessages.SendMessage,
+                    ephemeralMessageParameters: ephemeralMessageParameters,
+                    replyParameters: replyParameters,
                     disableNotification: true);
 
                 return true;
@@ -130,6 +145,8 @@ internal class AddWelcomeWizardHandler
                     await _bot.SendMessage(
                         chatId,
                         Resources.BotMessages.InvalidUrl,
+                        ephemeralMessageParameters: ephemeralMessageParameters,
+                        replyParameters: replyParameters,
                         disableNotification: true);
 
                     return true;
@@ -146,6 +163,8 @@ internal class AddWelcomeWizardHandler
                     await _bot.SendMessage(
                         chatId,
                         Resources.BotMessages.SendMessage,
+                        ephemeralMessageParameters: ephemeralMessageParameters,
+                        replyParameters: replyParameters,
                         disableNotification: true);
                 }
                 catch (Exception ex)
@@ -153,6 +172,8 @@ internal class AddWelcomeWizardHandler
                     await _bot.SendMessage(
                         chatId,
                         Resources.BotMessages.UnsupportedUrlMediaType,
+                        ephemeralMessageParameters: ephemeralMessageParameters,
+                        replyParameters: replyParameters,
                         disableNotification: true);
                     await _devNotifier.Notify(ex);
                 }
@@ -197,6 +218,8 @@ internal class AddWelcomeWizardHandler
             await _bot.SendMessage(
                 chatId,
                 Resources.BotMessages.WelcomeCreated,
+                ephemeralMessageParameters: ephemeralMessageParameters,
+                replyParameters: replyParameters,
                 disableNotification: true);
 
             return true;

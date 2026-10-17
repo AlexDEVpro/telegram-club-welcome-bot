@@ -7,4 +7,5 @@ namespace TelegramClubWelcomeBot.Features.AddWelcome.Commands;
 internal record StartAddWelcomeCommand(
     long ChatId,
     ChatType ChatType,
-    long FromUserId) : IRequest;
+    long FromUserId,
+    int? EphemeralMessageId) : IRequest;

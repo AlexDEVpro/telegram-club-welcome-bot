@@ -82,6 +82,9 @@ internal class TelegramUpdateRouter
             if (msg.Text == null)
                 return;
 
+            var ephemeralMessageParameters = new EphemeralMessageParameters { ReceiverUserId = from.Id };
+            var replyParameters = new ReplyParameters { EphemeralMessageId = msg.EphemeralMessageId };
+
             // Cancel command.
             if (msg.Text.StartsWith($"/{BotCommands.Cancel}"))
             {
@@ -92,6 +95,8 @@ internal class TelegramUpdateRouter
                 await bot.SendMessage(
                     chatId,
                     Resources.BotMessages.Cancelled,
+                    ephemeralMessageParameters: ephemeralMessageParameters,
+                    //replyParameters: replyParameters, // TODO: !!!
                     disableNotification: true);
 
                 return;
@@ -104,7 +109,8 @@ internal class TelegramUpdateRouter
                     new StartAddWelcomeCommand(
                         chatId,
                         msg.Chat.Type,
-                        from.Id));
+                        from.Id,
+                        msg.EphemeralMessageId));
 
                 return;
             }
@@ -112,6 +118,7 @@ internal class TelegramUpdateRouter
                 new AddWelcomeWizardCommand(
                     msg.Chat.Id,
                     from.Id,
+                    msg.EphemeralMessageId,
                     msg.Text,
                     msg.Entities,
                     msg.Caption,

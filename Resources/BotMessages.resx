@@ -121,16 +121,16 @@
     <value>❌ Cancelled</value>
   </data>
   <data name="SendWelcomeName" xml:space="preserve">
-    <value>🏷 Send welcome name</value>
+    <value>🏷 Reply with welcome name</value>
   </data>
   <data name="NameAlreadyExists" xml:space="preserve">
     <value>❌ Name already exists</value>
   </data>
   <data name="SendMedia" xml:space="preserve">
-    <value>📎 Send URL or file</value>
+    <value>📎 Reply with URL or file</value>
   </data>
   <data name="SendMessage" xml:space="preserve">
-    <value>💬 Send welcome message</value>
+    <value>💬 Reply with welcome message</value>
   </data>
   <data name="WelcomeCreated" xml:space="preserve">
     <value>✅ Welcome created</value>

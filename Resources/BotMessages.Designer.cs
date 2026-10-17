@@ -133,7 +133,7 @@ namespace TelegramClubWelcomeBot.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 📎 Send URL or file.
+        ///   Looks up a localized string similar to 📎 Reply with URL or file.
         /// </summary>
         internal static string SendMedia {
             get {
@@ -142,7 +142,7 @@ namespace TelegramClubWelcomeBot.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 💬 Send welcome message.
+        ///   Looks up a localized string similar to 💬 Reply with welcome message.
         /// </summary>
         internal static string SendMessage {
             get {
@@ -151,7 +151,7 @@ namespace TelegramClubWelcomeBot.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 🏷 Send welcome name.
+        ///   Looks up a localized string similar to 🏷 Reply with welcome name.
         /// </summary>
         internal static string SendWelcomeName {
             get {
