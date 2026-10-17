@@ -7,6 +7,7 @@ namespace TelegramClubWelcomeBot.Features.AddWelcome.Commands;
 internal record AddWelcomeWizardCommand(
     long ChatId,
     long FromUserId,
+    int? EphemeralMessageId,
     string? Text,
     MessageEntity[]? Entities,
     string? Caption,

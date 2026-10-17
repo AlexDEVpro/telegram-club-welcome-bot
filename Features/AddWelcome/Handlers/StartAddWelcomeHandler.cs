@@ -1,6 +1,7 @@
 using MediatR;
 
 using Telegram.Bot;
+using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 
 using TelegramClubWelcomeBot.Features.AddWelcome.Commands;
@@ -32,12 +33,16 @@ internal class StartAddWelcomeHandler
         var chatId = request.ChatId;
         var chatType = request.ChatType;
         var fromUserId = request.FromUserId;
+        var ephemeralMessageParameters = new EphemeralMessageParameters { ReceiverUserId = fromUserId };
+        var replyParameters = new ReplyParameters { EphemeralMessageId = request.EphemeralMessageId };
 
         if (chatType is not (ChatType.Group or ChatType.Supergroup))
         {
             await _bot.SendMessage(
                 chatId,
                 BotMessages.AddWelcomeMustBeGroup,
+                ephemeralMessageParameters: ephemeralMessageParameters,
+                replyParameters: replyParameters,
                 disableNotification: true,
                 cancellationToken: cancellationToken);
 
@@ -54,6 +59,8 @@ internal class StartAddWelcomeHandler
             await _bot.SendMessage(
                 chatId,
                 BotMessages.AddWelcomeOwnerOnly,
+                ephemeralMessageParameters: ephemeralMessageParameters,
+                replyParameters: replyParameters,
                 disableNotification: true,
                 cancellationToken: cancellationToken);
 
@@ -72,6 +79,8 @@ internal class StartAddWelcomeHandler
         await _bot.SendMessage(
             chatId,
             BotMessages.SendWelcomeName,
+            ephemeralMessageParameters: ephemeralMessageParameters,
+            replyParameters: replyParameters,
             disableNotification: true,
             cancellationToken: cancellationToken);
     }

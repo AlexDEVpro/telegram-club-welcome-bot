@@ -70,12 +70,14 @@ internal class SetBotCommandsService : IHostedService
                     new BotCommand
                     {
                         Command = BotCommands.AddWelcome,
-                        Description = GetString(nameof(BotMessages.BotCommandAddWelcome), culture)
+                        Description = GetString(nameof(BotMessages.BotCommandAddWelcome), culture),
+                        IsEphemeral = true
                     },
                     new BotCommand
                     {
                         Command = BotCommands.Cancel,
-                        Description = GetString(nameof(BotMessages.BotCommandCancel), culture)
+                        Description = GetString(nameof(BotMessages.BotCommandCancel), culture),
+                        IsEphemeral = true
                     }
                 }
                 : []
