@@ -20,6 +20,7 @@ internal class TelegramUpdateRouter
     private readonly WizardStateService _states;
     private readonly ITelegramBotClient _bot;
     private readonly DevNotifier _devNotifier;
+    private readonly StorageService _storage;
 
     public TelegramUpdateRouter(
         IMediator mediator,
@@ -27,7 +28,8 @@ internal class TelegramUpdateRouter
         CultureContextManager cultureContextManager,
         WizardStateService states,
         ITelegramBotClient bot,
-        DevNotifier devNotifier)
+        DevNotifier devNotifier,
+        StorageService storage)
     {
         _mediator = mediator;
         _userCultureResolver = userCultureResolver;
@@ -35,6 +37,7 @@ internal class TelegramUpdateRouter
         _states = states;
         _bot = bot;
         _devNotifier = devNotifier;
+        _storage = storage;
     }
 
     public async Task Update(
@@ -47,6 +50,24 @@ internal class TelegramUpdateRouter
 
         var msg = update.Message;
         var chatId = msg.Chat.Id;
+
+        // Migration.
+        // Group migrating to a supergroup or similar transformation.
+        if (msg.MigrateToChatId is long newChatId)
+        {
+            _storage.MigrateChatId(chatId, newChatId);
+            _states.MigrateChatId(chatId, newChatId);
+
+            //return; In case of system message has been merged with the regular message let the logic to continue.
+        }
+        // This message belongs to the new supergroup and references the old group.
+        if (msg.MigrateFromChatId is long oldChatId)
+        {
+            _storage.MigrateChatId(oldChatId, chatId);
+            _states.MigrateChatId(oldChatId, chatId);
+
+            //return; In case of system message has been merged with the regular message let the logic to continue.
+        }
 
         var from = msg.From;
         if (from == null)
