@@ -117,7 +117,7 @@ internal class TelegramUpdateRouter
                     chatId,
                     Resources.BotMessages.Cancelled,
                     ephemeralMessageParameters: ephemeralMessageParameters,
-                    //replyParameters: replyParameters, // TODO: !!!
+                    replyParameters: replyParameters,
                     disableNotification: true);
 
                 return;
