@@ -97,6 +97,15 @@ namespace TelegramClubWelcomeBot.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Fill missing welcome FileIds.
+        /// </summary>
+        internal static string BotCommandFillWelcomeFileIds {
+            get {
+                return ResourceManager.GetString("BotCommandFillWelcomeFileIds", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to ❌ Cancelled.
         /// </summary>
         internal static string Cancelled {
@@ -115,6 +124,60 @@ namespace TelegramClubWelcomeBot.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to ⚠ Only group administrators can use this command..
+        /// </summary>
+        internal static string FillWelcomeFileIdsAdminRequired {
+            get {
+                return ResourceManager.GetString("FillWelcomeFileIdsAdminRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ✅ File IDs filled: {0}. Failed: {1}..
+        /// </summary>
+        internal static string FillWelcomeFileIdsCompleted {
+            get {
+                return ResourceManager.GetString("FillWelcomeFileIdsCompleted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ⚠ This command must be run in a group..
+        /// </summary>
+        internal static string FillWelcomeFileIdsGroupOnly {
+            get {
+                return ResourceManager.GetString("FillWelcomeFileIdsGroupOnly", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ✅ No welcomes without FileId..
+        /// </summary>
+        internal static string FillWelcomeFileIdsNothingToFill {
+            get {
+                return ResourceManager.GetString("FillWelcomeFileIdsNothingToFill", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Private chat is required. Please open the bot in private messages and press Start, then run this command again..
+        /// </summary>
+        internal static string FillWelcomeFileIdsPrivateChatUnavailable {
+            get {
+                return ResourceManager.GetString("FillWelcomeFileIdsPrivateChatUnavailable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 🔄 Filling missing welcome file IDs....
+        /// </summary>
+        internal static string FillWelcomeFileIdsStarted {
+            get {
+                return ResourceManager.GetString("FillWelcomeFileIdsStarted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to ⚠ Invalid URL..
         /// </summary>
         internal static string InvalidUrl {
@@ -129,6 +192,15 @@ namespace TelegramClubWelcomeBot.Resources {
         internal static string NameAlreadyExists {
             get {
                 return ResourceManager.GetString("NameAlreadyExists", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ✨ Open bot in private chat.
+        /// </summary>
+        internal static string OpenBotPrivateChat {
+            get {
+                return ResourceManager.GetString("OpenBotPrivateChat", resourceCulture);
             }
         }
         

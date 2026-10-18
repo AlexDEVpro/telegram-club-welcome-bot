@@ -162,4 +162,28 @@
   <data name="UrlMediaTypeDetectionFailed" xml:space="preserve">
     <value>⚠ Не удалось получить медиа по ссылке. Проверьте ссылку и попробуйте снова.</value>
   </data>
+  <data name="BotCommandFillWelcomeFileIds" xml:space="preserve">
+    <value>Заполнить отсутствующие FileId приветствий</value>
+  </data>
+  <data name="FillWelcomeFileIdsStarted" xml:space="preserve">
+    <value>🔄 Заполняю отсутствующие FileId...</value>
+  </data>
+  <data name="FillWelcomeFileIdsNothingToFill" xml:space="preserve">
+    <value>✅ Нет приветствий без FileId.</value>
+  </data>
+  <data name="FillWelcomeFileIdsCompleted" xml:space="preserve">
+    <value>✅ FileId заполнено: {0}. Ошибок: {1}.</value>
+  </data>
+  <data name="FillWelcomeFileIdsPrivateChatUnavailable" xml:space="preserve">
+    <value>Для выполнения команды нужна личка с ботом. Откройте личные сообщения с ботом, нажмите «Старт», а затем выполни команду ещё раз.</value>
+  </data>
+  <data name="FillWelcomeFileIdsGroupOnly" xml:space="preserve">
+    <value>⚠ Эту команду нужно запускать в группе.</value>
+  </data>
+  <data name="FillWelcomeFileIdsAdminRequired" xml:space="preserve">
+    <value>⚠ Эта команда доступна только администраторам группы.</value>
+  </data>
+  <data name="OpenBotPrivateChat" xml:space="preserve">
+    <value>✨ Открыть личку с ботом</value>
+  </data>
 </root>
