@@ -9,6 +9,7 @@ using Telegram.Bot.Types.ReplyMarkups;
 using TelegramClubWelcomeBot.Features.AddWelcome.Commands;
 using TelegramClubWelcomeBot.Features.AddWelcome.Services;
 using TelegramClubWelcomeBot.Infrastructure.Notifications;
+using TelegramClubWelcomeBot.Infrastructure.Persistence.Services;
 using TelegramClubWelcomeBot.Resources;
 
 namespace TelegramClubWelcomeBot.Features.AddWelcome.Handlers;

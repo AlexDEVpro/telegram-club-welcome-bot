@@ -4,6 +4,8 @@ using Newtonsoft.Json.Serialization;
 
 using TelegramClubWelcomeBot.Infrastructure.Persistence.Models;
 
+namespace TelegramClubWelcomeBot.Infrastructure.Persistence.Services;
+
 internal class StorageService
 {
     private readonly string _dataPath;

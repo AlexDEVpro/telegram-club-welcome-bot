@@ -12,6 +12,7 @@ using TelegramClubWelcomeBot.Features.NewMember.Services;
 using TelegramClubWelcomeBot.Infrastructure.Configuration;
 using TelegramClubWelcomeBot.Infrastructure.Localization.Services;
 using TelegramClubWelcomeBot.Infrastructure.Notifications;
+using TelegramClubWelcomeBot.Infrastructure.Persistence.Services;
 using TelegramClubWelcomeBot.Infrastructure.Telegram.Services;
 
 class Program
