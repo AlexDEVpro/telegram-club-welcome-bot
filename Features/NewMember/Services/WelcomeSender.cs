@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.Options;
+﻿using System.Net;
+
+using Microsoft.Extensions.Options;
 
 using Telegram.Bot;
 using Telegram.Bot.Types;
@@ -61,7 +63,9 @@ internal class WelcomeSender
             return false;
 
         var welcome = welcomes[Random.Shared.Next(welcomes.Count)];
-        var welcomeText = welcome.Message?.Replace(WelcomeUserPlaceholder, joinedUserFirstName);
+        var welcomeText = welcome.Message?.Replace(
+            WelcomeUserPlaceholder,
+            $"""<a href="tg://user?id={joinedUserId}">{WebUtility.HtmlEncode(joinedUserFirstName)}</a>""");
         var useUrlFirst = string.IsNullOrWhiteSpace(welcome.FileId);
 
         Message sendMediaResponse;
