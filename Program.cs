@@ -45,6 +45,7 @@ class Program
         builder.Services.AddSingleton<UserCultureResolver>();
         builder.Services.AddSingleton<WizardStateService>();
         builder.Services.AddSingleton<PendingWelcomeProcessor>();
+        builder.Services.AddSingleton<WelcomeMediaUploader>();
         builder.Services.AddSingleton<WelcomeSender>();
         builder.Services.AddSingleton<DevNotifier>();
 

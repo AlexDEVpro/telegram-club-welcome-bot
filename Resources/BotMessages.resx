@@ -156,4 +156,34 @@
   <data name="BotCommandCancel" xml:space="preserve">
     <value>Cancel welcome adding operation</value>
   </data>
+  <data name="UrlMediaTypeDetectionTimeout" xml:space="preserve">
+    <value>⚠ Could not determine the media type within 10 seconds. Try another URL.</value>
+  </data>
+  <data name="UrlMediaTypeDetectionFailed" xml:space="preserve">
+    <value>⚠ Could not retrieve media from this URL. Check the URL and try again.</value>
+  </data>
+  <data name="BotCommandFillWelcomeFileIds" xml:space="preserve">
+    <value>Fill missing welcome FileIds</value>
+  </data>
+  <data name="FillWelcomeFileIdsStarted" xml:space="preserve">
+    <value>🔄 Filling missing welcome file IDs...</value>
+  </data>
+  <data name="FillWelcomeFileIdsNothingToFill" xml:space="preserve">
+    <value>✅ No welcomes without FileId.</value>
+  </data>
+  <data name="FillWelcomeFileIdsCompleted" xml:space="preserve">
+    <value>✅ File IDs filled: {0}. Failed: {1}.</value>
+  </data>
+  <data name="FillWelcomeFileIdsPrivateChatUnavailable" xml:space="preserve">
+    <value>Private chat is required. Please open the bot in private messages and press Start, then run this command again.</value>
+  </data>
+  <data name="FillWelcomeFileIdsGroupOnly" xml:space="preserve">
+    <value>⚠ This command must be run in a group.</value>
+  </data>
+  <data name="FillWelcomeFileIdsAdminRequired" xml:space="preserve">
+    <value>⚠ Only group administrators can use this command.</value>
+  </data>
+  <data name="OpenBotPrivateChat" xml:space="preserve">
+    <value>✨ Open bot in private chat</value>
+  </data>
 </root>

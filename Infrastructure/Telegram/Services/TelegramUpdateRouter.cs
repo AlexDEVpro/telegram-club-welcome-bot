@@ -148,6 +148,20 @@ internal class TelegramUpdateRouter
                     msg.Animation,
                     msg.Video));
 
+            // Fill in missing welcome FileIDs.
+            if (msg.Text.StartsWith($"/{BotCommands.FillWelcomeFileIds}"))
+            {
+                await _mediator.Send(
+                    new FillWelcomeFileIdsCommand(
+                        chatId,
+                        msg.Chat.Type,
+                        from.Id,
+                        msg.EphemeralMessageId),
+                    ct);
+
+                return;
+            }
+
             if (processed)
                 return;
         }

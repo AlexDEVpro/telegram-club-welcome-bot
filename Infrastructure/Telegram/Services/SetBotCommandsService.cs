@@ -75,6 +75,12 @@ internal class SetBotCommandsService : IHostedService
                     },
                     new BotCommand
                     {
+                        Command = BotCommands.FillWelcomeFileIds,
+                        Description = GetString(nameof(BotMessages.BotCommandFillWelcomeFileIds), culture),
+                        IsEphemeral = true
+                    },
+                    new BotCommand
+                    {
                         Command = BotCommands.Cancel,
                         Description = GetString(nameof(BotMessages.BotCommandCancel), culture),
                         IsEphemeral = true
