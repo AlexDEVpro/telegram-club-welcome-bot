@@ -29,7 +29,7 @@ internal class TelegramPollingService : BackgroundService
     protected override async Task ExecuteAsync(
         CancellationToken hostCt)
     {
-        await _pendingWelcomeProcessor.ProcessAll();
+        await _pendingWelcomeProcessor.ProcessAll(hostCt);
 
         while (!hostCt.IsCancellationRequested) // While host isn't stopping.
         {

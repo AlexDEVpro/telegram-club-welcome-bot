@@ -44,7 +44,8 @@ internal class WelcomeSender
         long chatId,
         int joinMessageId,
         long joinedUserId,
-        string joinedUserFirstName)
+        string joinedUserFirstName,
+        CancellationToken cancellationToken)
     {
         var now = DateTime.UtcNow;
         var cooldownBorder = now.AddMinutes(-_options.WelcomeRepeatCooldownMin);
@@ -77,7 +78,12 @@ internal class WelcomeSender
                 joinMessageId,
                 welcome,
                 welcomeText,
-                useUrlFirst);
+                useUrlFirst,
+                cancellationToken);
+        }
+        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+        {
+            throw;
         }
         catch (Exception ex)
         {
@@ -92,7 +98,8 @@ internal class WelcomeSender
                         joinMessageId,
                         welcome,
                         welcomeText,
-                        true);
+                        true,
+                        cancellationToken);
                 }
                 catch (Exception inner)
                 {
@@ -141,7 +148,8 @@ internal class WelcomeSender
         int joinMessageId,
         Welcome welcome,
         string? text,
-        bool useUrl = false)
+        bool useUrl = false,
+        CancellationToken cancellationToken = default)
     {
         var replyParameters = new ReplyParameters
         {
@@ -162,7 +170,8 @@ internal class WelcomeSender
                 welcome.FileId,
                 text,
                 replyParameters,
-                ParseMode.Html);
+                parseMode: ParseMode.Html,
+                cancellationToken: cancellationToken);
         }
 
         if (string.IsNullOrWhiteSpace(welcome.Url))
@@ -173,7 +182,7 @@ internal class WelcomeSender
 
         using var media = await _welcomeMediaUploader.PrepareUploadAsync(
             welcome.Url,
-            CancellationToken.None);
+            cancellationToken);
 
         if (media.Type != welcome.Type)
         {
@@ -188,7 +197,7 @@ internal class WelcomeSender
             ephemeralMessageParameters: null,
             replyParameters,
             parseMode: ParseMode.Html,
-            cancellationToken: CancellationToken.None);
+            cancellationToken: cancellationToken);
     }
 
     /// <summary>

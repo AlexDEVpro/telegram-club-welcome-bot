@@ -24,6 +24,7 @@ internal class NewMemberJoinedHandler
             request.ChatId,
             request.JoinMessageId,
             request.JoinedUserId,
-            request.JoinedUserFirstName);
+            request.JoinedUserFirstName,
+            cancellationToken);
     }
 }

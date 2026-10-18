@@ -62,7 +62,8 @@ internal class AddWelcomeWizardHandler
                     Resources.BotMessages.SendWelcomeName,
                     ephemeralMessageParameters: ephemeralMessageParameters,
                     replyParameters: replyParameters,
-                    disableNotification: true);
+                    disableNotification: true,
+                    cancellationToken: cancellationToken);
 
                 return true;
             }
@@ -75,7 +76,8 @@ internal class AddWelcomeWizardHandler
                     Resources.BotMessages.NameAlreadyExists,
                     ephemeralMessageParameters: ephemeralMessageParameters,
                     replyParameters: replyParameters,
-                    disableNotification: true);
+                    disableNotification: true,
+                    cancellationToken: cancellationToken);
 
                 return true;
             }
@@ -88,7 +90,8 @@ internal class AddWelcomeWizardHandler
                 Resources.BotMessages.SendMedia,
                 ephemeralMessageParameters: ephemeralMessageParameters,
                 replyParameters: replyParameters,
-                disableNotification: true);
+                disableNotification: true,
+                cancellationToken: cancellationToken);
 
             return true;
         }
@@ -128,7 +131,8 @@ internal class AddWelcomeWizardHandler
                     Resources.BotMessages.SendMessage,
                     ephemeralMessageParameters: ephemeralMessageParameters,
                     replyParameters: replyParameters,
-                    disableNotification: true);
+                    disableNotification: true,
+                    cancellationToken: cancellationToken);
 
                 return true;
             }
@@ -148,7 +152,8 @@ internal class AddWelcomeWizardHandler
                         Resources.BotMessages.InvalidUrl,
                         ephemeralMessageParameters: ephemeralMessageParameters,
                         replyParameters: replyParameters,
-                        disableNotification: true);
+                        disableNotification: true,
+                        cancellationToken: cancellationToken);
 
                     return true;
                 }
@@ -303,7 +308,8 @@ internal class AddWelcomeWizardHandler
                 Resources.BotMessages.WelcomeCreated,
                 ephemeralMessageParameters: ephemeralMessageParameters,
                 replyParameters: replyParameters,
-                disableNotification: true);
+                disableNotification: true,
+                cancellationToken: cancellationToken);
 
             return true;
         }
