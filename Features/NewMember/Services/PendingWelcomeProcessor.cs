@@ -23,7 +23,8 @@ internal class PendingWelcomeProcessor
         long chatId,
         int joinMessageId,
         long userId,
-        string firstName)
+        string firstName,
+        CancellationToken cancellationToken)
     {
         var pending = _storage.Data.PendingWelcomes.FirstOrDefault(pw =>
             pw.ChatId == chatId &&
@@ -49,16 +50,19 @@ internal class PendingWelcomeProcessor
 
         _storage.Save();
 
-        await Process(pending);
+        await Process(pending, cancellationToken);
     }
 
-    public async Task ProcessAll()
+    public async Task ProcessAll(CancellationToken cancellationToken)
     {
         foreach (var pending in _storage.Data.PendingWelcomes.ToList())
         {
+            if (cancellationToken.IsCancellationRequested)
+                return;
+
             try
             {
-                await Process(pending);
+                await Process(pending, cancellationToken);
             }
             catch (Exception ex)
             {
@@ -67,13 +71,16 @@ internal class PendingWelcomeProcessor
         }
     }
 
-    private async Task Process(PendingWelcome pending)
+    private async Task Process(
+        PendingWelcome pending,
+        CancellationToken cancellationToken)
     {
         var succeeded = await _sender.Send(
             pending.ChatId,
             pending.JoinMessageId,
             pending.UserId,
-            pending.FirstName);
+            pending.FirstName,
+            cancellationToken);
 
         if (!succeeded)
             return;

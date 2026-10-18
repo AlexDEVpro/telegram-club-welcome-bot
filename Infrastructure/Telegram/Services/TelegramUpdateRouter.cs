@@ -75,7 +75,8 @@ internal class TelegramUpdateRouter
             await _bot.SendMessage(
                 chatId,
                 Resources.BotMessages.ErrorMessageFromIsNull,
-                disableNotification: true);
+                disableNotification: true,
+                cancellationToken: ct);
             await _devNotifier.Notify(
                 $"From is null in message \"{msg.ToString()}\".");
 
@@ -94,7 +95,8 @@ internal class TelegramUpdateRouter
                             chatId,
                             msg.Id,
                             joinedUser.Id,
-                            joinedUser.FirstName));
+                            joinedUser.FirstName),
+                        cancellationToken: ct);
                 }
 
                 return;
@@ -118,7 +120,8 @@ internal class TelegramUpdateRouter
                     Resources.BotMessages.Cancelled,
                     ephemeralMessageParameters: ephemeralMessageParameters,
                     replyParameters: replyParameters,
-                    disableNotification: true);
+                    disableNotification: true,
+                    cancellationToken: ct);
 
                 return;
             }
@@ -131,7 +134,8 @@ internal class TelegramUpdateRouter
                         chatId,
                         msg.Chat.Type,
                         from.Id,
-                        msg.EphemeralMessageId));
+                        msg.EphemeralMessageId),
+                    cancellationToken: ct);
 
                 return;
             }
@@ -146,7 +150,8 @@ internal class TelegramUpdateRouter
                     msg.CaptionEntities,
                     msg.Photo,
                     msg.Animation,
-                    msg.Video));
+                    msg.Video),
+                cancellationToken: ct);
 
             // Fill in missing welcome FileIDs.
             if (msg.Text.StartsWith($"/{BotCommands.FillWelcomeFileIds}"))
@@ -157,7 +162,7 @@ internal class TelegramUpdateRouter
                         msg.Chat.Type,
                         from.Id,
                         msg.EphemeralMessageId),
-                    ct);
+                    cancellationToken: ct);
 
                 return;
             }
