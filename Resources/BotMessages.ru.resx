@@ -156,4 +156,10 @@
   <data name="BotCommandCancel" xml:space="preserve">
     <value>Отмена операции добавления приветствия</value>
   </data>
+  <data name="UrlMediaTypeDetectionTimeout" xml:space="preserve">
+    <value>⚠ Не удалось определить тип медиа за 10 секунд. Попробуйте другую ссылку.</value>
+  </data>
+  <data name="UrlMediaTypeDetectionFailed" xml:space="preserve">
+    <value>⚠ Не удалось получить медиа по ссылке. Проверьте ссылку и попробуйте снова.</value>
+  </data>
 </root>

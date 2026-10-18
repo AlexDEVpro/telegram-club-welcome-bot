@@ -156,4 +156,10 @@
   <data name="BotCommandCancel" xml:space="preserve">
     <value>Cancel welcome adding operation</value>
   </data>
+  <data name="UrlMediaTypeDetectionTimeout" xml:space="preserve">
+    <value>⚠ Could not determine the media type within 10 seconds. Try another URL.</value>
+  </data>
+  <data name="UrlMediaTypeDetectionFailed" xml:space="preserve">
+    <value>⚠ Could not retrieve media from this URL. Check the URL and try again.</value>
+  </data>
 </root>

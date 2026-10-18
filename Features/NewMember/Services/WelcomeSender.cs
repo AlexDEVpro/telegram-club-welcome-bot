@@ -1,12 +1,11 @@
-﻿using System.Net.Http.Headers;
-
-using Microsoft.Extensions.Options;
+﻿using Microsoft.Extensions.Options;
 
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 
 using TelegramClubWelcomeBot.Features.AddWelcome.Models;
+using TelegramClubWelcomeBot.Features.AddWelcome.Services;
 using TelegramClubWelcomeBot.Features.NewMember.Models;
 using TelegramClubWelcomeBot.Infrastructure.Configuration;
 using TelegramClubWelcomeBot.Infrastructure.Notifications;
@@ -19,6 +18,7 @@ internal class WelcomeSender
 
     private readonly ITelegramBotClient _bot;
     private readonly StorageService _storage;
+    private readonly WelcomeMediaUploader _welcomeMediaUploader;
     private readonly DevNotifier _devNotifier;
     private readonly WelcomeOptions _options;
 
@@ -27,11 +27,13 @@ internal class WelcomeSender
     public WelcomeSender(
         ITelegramBotClient bot,
         StorageService storage,
+        WelcomeMediaUploader welcomeMediaUploader,
         DevNotifier devNotifier,
         IOptions<WelcomeOptions> options)
     {
         _bot = bot;
         _storage = storage;
+        _welcomeMediaUploader = welcomeMediaUploader;
         _devNotifier = devNotifier;
         _options = options.Value;
     }
@@ -137,161 +139,52 @@ internal class WelcomeSender
         string? text,
         bool useUrl = false)
     {
-        if (useUrl)
+        var replyParameters = new ReplyParameters
         {
-            if (string.IsNullOrWhiteSpace(welcome.Url))
-            {
-                throw new InvalidOperationException($"No URL available for welcome \"{welcome.Name}\".");
-            }
+            MessageId = joinMessageId
+        };
 
-            return welcome.Type switch
-            {
-                WelcomeType.Image =>
-                    await SendFromUrl(
-                        welcome.Url,
-                        fileStream =>
-                            _bot.SendPhoto(
-                                chatId,
-                                fileStream,
-                                caption: text,
-                                parseMode: ParseMode.Html,
-                                replyParameters: new ReplyParameters
-                                {
-                                    MessageId = joinMessageId
-                                })),
-
-                WelcomeType.Animation =>
-                    await SendFromUrl(
-                        welcome.Url,
-                        fileStream =>
-                            _bot.SendAnimation(
-                                chatId,
-                                fileStream,
-                                caption: text,
-                                parseMode: ParseMode.Html,
-                                replyParameters: new ReplyParameters
-                                {
-                                    MessageId = joinMessageId
-                                })),
-
-                WelcomeType.Video =>
-                    await SendFromUrl(
-                        welcome.Url,
-                        fileStream =>
-                            _bot.SendVideo(
-                                chatId,
-                                fileStream,
-                                caption: text,
-                                parseMode: ParseMode.Html,
-                                replyParameters: new ReplyParameters
-                                {
-                                    MessageId = joinMessageId
-                                })),
-
-                _ => await HandleUnsupportedType(chatId, welcome)
-            };
-        }
-        else
+        if (!useUrl)
         {
             if (string.IsNullOrWhiteSpace(welcome.FileId))
             {
-                throw new InvalidOperationException($"No file ID available for welcome \"{welcome.Name}\".");
+                throw new InvalidOperationException(
+                    $"No file ID available for welcome \"{welcome.Name}\".");
             }
 
-            return welcome.Type switch
-            {
-                WelcomeType.Image =>
-                    await _bot.SendPhoto(
-                        chatId,
-                        welcome.FileId,
-                        caption: text,
-                        parseMode: ParseMode.Html,
-                        replyParameters: new ReplyParameters
-                        {
-                            MessageId = joinMessageId
-                        }),
-
-                WelcomeType.Animation =>
-                    await _bot.SendAnimation(
-                        chatId,
-                        welcome.FileId,
-                        caption: text,
-                        parseMode: ParseMode.Html,
-                        replyParameters: new ReplyParameters
-                        {
-                            MessageId = joinMessageId
-                        }),
-
-                WelcomeType.Video =>
-                    await _bot.SendVideo(
-                        chatId,
-                        welcome.FileId,
-                        caption: text,
-                        parseMode: ParseMode.Html,
-                        replyParameters: new ReplyParameters
-                        {
-                            MessageId = joinMessageId
-                        }),
-
-                _ => await HandleUnsupportedType(chatId, welcome)
-            };
+            return await _welcomeMediaUploader.SendByFileIdAsync(
+                chatId,
+                welcome.Type,
+                welcome.FileId,
+                text,
+                replyParameters,
+                ParseMode.Html);
         }
-    }
 
-    private async Task<Message> SendFromUrl(
-        string url,
-        Func<InputFile, Task<Message>> sender)
-    {
-        using var response = await _http.GetAsync(
-            url,
-            HttpCompletionOption.ResponseHeadersRead);
+        if (string.IsNullOrWhiteSpace(welcome.Url))
+        {
+            throw new InvalidOperationException(
+                $"No URL available for welcome \"{welcome.Name}\".");
+        }
 
-        response.EnsureSuccessStatusCode();
+        using var media = await _welcomeMediaUploader.PrepareUploadAsync(
+            welcome.Url,
+            CancellationToken.None);
 
-        await using var stream = await response.Content.ReadAsStreamAsync();
+        if (media.Type != welcome.Type)
+        {
+            throw new InvalidOperationException(
+                $"Welcome type mismatch for \"{welcome.Name}\": expected {welcome.Type}, received {media.Type}.");
+        }
 
-        var inputFileStream =
-            new InputFileStream(
-                stream,
-                GetFileName(
-                    response.Content.Headers,
-                    url));
-
-        return await sender(inputFileStream);
-    }
-
-    private static string GetFileName(
-        HttpContentHeaders headers,
-        string url)
-    {
-        var cd = headers.ContentDisposition;
-
-        if (!string.IsNullOrWhiteSpace(cd?.FileNameStar))
-            return cd.FileNameStar.Trim('"');
-
-        if (!string.IsNullOrWhiteSpace(cd?.FileName))
-            return cd.FileName.Trim('"');
-
-        var uri = new Uri(url);
-        var name = Path.GetFileName(uri.AbsolutePath);
-
-        return string.IsNullOrWhiteSpace(name)
-            ? "file.bin"
-            : name;
-    }
-
-    private async Task<Message> HandleUnsupportedType(
-        long chatId,
-        Welcome welcome)
-    {
-        var errorMessage = $"Unhandled welcome type: {welcome.Type}.";
-
-        await _devNotifier.Notify(
+        return await _welcomeMediaUploader.UploadAsync(
             chatId,
-            welcome,
-            errorMessage);
-
-        throw new NotSupportedException(errorMessage);
+            media,
+            text,
+            ephemeralMessageParameters: null,
+            replyParameters,
+            parseMode: ParseMode.Html,
+            cancellationToken: CancellationToken.None);
     }
 
     /// <summary>
@@ -303,9 +196,9 @@ internal class WelcomeSender
         Welcome welcome,
         Message msg)
     {
-        var fileId = msg.Video?.FileId
-            ?? msg.Animation?.FileId
-            ?? msg.Photo?.LastOrDefault()?.FileId;
+        var fileId = WelcomeMediaUploader.GetFileId(
+            welcome.Type,
+            msg);
 
         if (fileId == null || fileId == welcome.FileId)
             return;

@@ -16,19 +16,20 @@ internal class AddWelcomeWizardHandler
     private readonly WizardStateService _states;
     private readonly StorageService _storage;
     private readonly ITelegramBotClient _bot;
+    private readonly WelcomeMediaUploader _welcomeMediaUploader;
     private readonly DevNotifier _devNotifier;
-
-    private static readonly HttpClient _http = new();
 
     public AddWelcomeWizardHandler(
         WizardStateService states,
         StorageService storage,
         ITelegramBotClient bot,
+        WelcomeMediaUploader welcomeMediaUploader,
         DevNotifier devNotifier)
     {
         _states = states;
         _storage = storage;
         _bot = bot;
+        _welcomeMediaUploader = welcomeMediaUploader;
         _devNotifier = devNotifier;
     }
 
@@ -43,7 +44,6 @@ internal class AddWelcomeWizardHandler
         var fromUserId = request.FromUserId;
         var ephemeralMessageParameters = new EphemeralMessageParameters { ReceiverUserId = fromUserId };
         var replyParameters = new ReplyParameters { EphemeralMessageId = request.EphemeralMessageId };
-
 
         if (!_states.TryGet(chatId, fromUserId, out var state))
             return false;
@@ -140,6 +140,7 @@ internal class AddWelcomeWizardHandler
             if (!string.IsNullOrWhiteSpace(urlCandidate))
             {
                 var url = urlCandidate.Trim();
+
                 if (!IsValidUrl(url))
                 {
                     await _bot.SendMessage(
@@ -152,30 +153,112 @@ internal class AddWelcomeWizardHandler
                     return true;
                 }
 
+                using var timeoutCts =
+                    CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+
+                timeoutCts.CancelAfter(TimeSpan.FromSeconds(10));
+
+                WelcomeMediaUploader.PreparedMedia preparedMedia;
+
+                // Type detection is required to continue the wizard.
                 try
                 {
-                    var type = await DetectWelcomeType(url);
-
-                    state.Url = url;
-                    state.Type = type;
-                    state.Step = Step.WaitMessage;
-
+                    preparedMedia = await _welcomeMediaUploader.PrepareUploadAsync(
+                        url,
+                        timeoutCts.Token);
+                }
+                catch (OperationCanceledException)
+                    when (!cancellationToken.IsCancellationRequested)
+                {
                     await _bot.SendMessage(
                         chatId,
-                        Resources.BotMessages.SendMessage,
+                        Resources.BotMessages.UrlMediaTypeDetectionTimeout,
                         ephemeralMessageParameters: ephemeralMessageParameters,
                         replyParameters: replyParameters,
-                        disableNotification: true);
+                        disableNotification: true,
+                        cancellationToken: cancellationToken);
+
+                    return true;
                 }
-                catch (Exception ex)
+                catch (NotSupportedException ex)
                 {
                     await _bot.SendMessage(
                         chatId,
                         Resources.BotMessages.UnsupportedUrlMediaType,
                         ephemeralMessageParameters: ephemeralMessageParameters,
                         replyParameters: replyParameters,
-                        disableNotification: true);
+                        disableNotification: true,
+                        cancellationToken: cancellationToken);
+
                     await _devNotifier.Notify(ex);
+
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    await _bot.SendMessage(
+                        chatId,
+                        Resources.BotMessages.UrlMediaTypeDetectionFailed,
+                        ephemeralMessageParameters: ephemeralMessageParameters,
+                        replyParameters: replyParameters,
+                        disableNotification: true,
+                        cancellationToken: cancellationToken);
+
+                    await _devNotifier.Notify(ex);
+
+                    return true;
+                }
+
+                using (preparedMedia)
+                {
+                    // From this point, the wizard can continue even if pre-upload fails.
+                    state.Url = url;
+                    state.Type = preparedMedia.Type;
+                    state.FileId = null;
+                    state.Step = Step.WaitMessage;
+
+                    Exception? uploadException = null;
+
+                    try
+                    {
+                        var message = await _welcomeMediaUploader.UploadAsync(
+                            chatId,
+                            preparedMedia,
+                            Resources.BotMessages.SendMessage,
+                            ephemeralMessageParameters,
+                            replyParameters,
+                            disableNotification: true,
+                            cancellationToken: timeoutCts.Token);
+
+                        state.FileId = WelcomeMediaUploader.GetFileId(
+                            preparedMedia.Type,
+                            message);
+                    }
+                    catch (OperationCanceledException)
+                        when (!cancellationToken.IsCancellationRequested)
+                    {
+                        // The shared timeout expired.
+                        // FileId at this stage is optional therefore just continue.
+                    }
+                    catch (Exception ex)
+                    {
+                        uploadException = ex;
+                    }
+
+                    // If pre-upload failed, still proceed to the welcome text step.
+                    if (state.FileId == null)
+                    {
+                        await _bot.SendMessage(
+                            chatId,
+                            Resources.BotMessages.SendMessage,
+                            ephemeralMessageParameters: ephemeralMessageParameters,
+                            replyParameters: replyParameters,
+                            disableNotification: true,
+                            cancellationToken: cancellationToken);
+                    }
+
+                    if (uploadException != null)
+                        await _devNotifier.Notify(uploadException);
                 }
 
                 return true;
@@ -226,34 +309,6 @@ internal class AddWelcomeWizardHandler
         }
 
         return false;
-    }
-
-    private static async Task<WelcomeType> DetectWelcomeType(
-        string url)
-    {
-        using var request = new HttpRequestMessage(
-            HttpMethod.Head,
-            url);
-
-        using var response = await _http.SendAsync(
-            request,
-            HttpCompletionOption.ResponseHeadersRead);
-
-        response.EnsureSuccessStatusCode();
-
-        var mediaType = response.Content.Headers.ContentType?.MediaType;
-
-        if (string.IsNullOrWhiteSpace(mediaType))
-            throw new Exception("Content-Type header is missing.");
-
-        if (mediaType.StartsWith("image/"))
-            return WelcomeType.Image;
-        if (mediaType.StartsWith("image/gif"))
-            return WelcomeType.Animation;
-        if (mediaType.StartsWith("video/"))
-            return WelcomeType.Video;
-
-        throw new Exception($"Unsupported content type: {mediaType}.");
     }
 
     private static bool IsValidUrl(

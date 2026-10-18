@@ -169,6 +169,24 @@ namespace TelegramClubWelcomeBot.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to ⚠ Could not retrieve media from this URL. Check the URL and try again..
+        /// </summary>
+        internal static string UrlMediaTypeDetectionFailed {
+            get {
+                return ResourceManager.GetString("UrlMediaTypeDetectionFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ⚠ Could not determine the media type within 10 seconds. Try another URL..
+        /// </summary>
+        internal static string UrlMediaTypeDetectionTimeout {
+            get {
+                return ResourceManager.GetString("UrlMediaTypeDetectionTimeout", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to ✅ Welcome created.
         /// </summary>
         internal static string WelcomeCreated {
