@@ -7,6 +7,7 @@ using TelegramClubWelcomeBot.Features.AddWelcome.Commands;
 using TelegramClubWelcomeBot.Features.AddWelcome.Models;
 using TelegramClubWelcomeBot.Features.AddWelcome.Services;
 using TelegramClubWelcomeBot.Infrastructure.Notifications;
+using TelegramClubWelcomeBot.Infrastructure.Persistence.Services;
 
 namespace TelegramClubWelcomeBot.Features.AddWelcome.Handlers;
 

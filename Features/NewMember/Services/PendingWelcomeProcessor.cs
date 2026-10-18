@@ -1,5 +1,6 @@
 ﻿using TelegramClubWelcomeBot.Features.NewMember.Models;
 using TelegramClubWelcomeBot.Infrastructure.Notifications;
+using TelegramClubWelcomeBot.Infrastructure.Persistence.Services;
 
 namespace TelegramClubWelcomeBot.Features.NewMember.Services;
 
