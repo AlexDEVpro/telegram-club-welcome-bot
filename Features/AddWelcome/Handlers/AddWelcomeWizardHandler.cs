@@ -172,8 +172,7 @@ internal class AddWelcomeWizardHandler
                         url,
                         timeoutCts.Token);
                 }
-                catch (OperationCanceledException)
-                    when (!cancellationToken.IsCancellationRequested)
+                catch (OperationCanceledException) when (!cancellationToken.IsCancellationRequested)
                 {
                     await _bot.SendMessage(
                         chatId,
@@ -198,6 +197,10 @@ internal class AddWelcomeWizardHandler
                     await _devNotifier.Notify(ex);
 
                     return true;
+                }
+                catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+                {
+                    throw;
                 }
                 catch (Exception ex)
                 {
@@ -239,11 +242,14 @@ internal class AddWelcomeWizardHandler
                             preparedMedia.Type,
                             message);
                     }
-                    catch (OperationCanceledException)
-                        when (!cancellationToken.IsCancellationRequested)
+                    catch (OperationCanceledException) when (!cancellationToken.IsCancellationRequested)
                     {
                         // The shared timeout expired.
                         // FileId at this stage is optional therefore just continue.
+                    }
+                    catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+                    {
+                        throw;
                     }
                     catch (Exception ex)
                     {

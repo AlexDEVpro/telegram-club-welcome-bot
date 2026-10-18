@@ -101,6 +101,10 @@ internal class WelcomeSender
                         true,
                         cancellationToken);
                 }
+                catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+                {
+                    throw;
+                }
                 catch (Exception inner)
                 {
                     await _devNotifier.Notify(
