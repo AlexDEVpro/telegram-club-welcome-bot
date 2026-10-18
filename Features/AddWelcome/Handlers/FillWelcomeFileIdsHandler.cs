@@ -100,8 +100,7 @@ internal class FillWelcomeFileIdsHandler
                 ChatAction.Typing,
                 cancellationToken: cancellationToken);
         }
-        catch (ApiRequestException ex) when (
-            ex.ErrorCode is 400 or 403)
+        catch (ApiRequestException ex) when (ex.ErrorCode is 400 or 403)
         {
             var botInfo = await _bot.GetMe(cancellationToken);
 
@@ -168,8 +167,7 @@ internal class FillWelcomeFileIdsHandler
 
                 filled++;
             }
-            catch (OperationCanceledException)
-                when (cancellationToken.IsCancellationRequested)
+            catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
             {
                 throw;
             }

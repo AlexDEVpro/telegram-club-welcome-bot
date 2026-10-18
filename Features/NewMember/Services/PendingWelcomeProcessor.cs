@@ -64,6 +64,10 @@ internal class PendingWelcomeProcessor
             {
                 await Process(pending, cancellationToken);
             }
+            catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+            {
+                throw;
+            }
             catch (Exception ex)
             {
                 await _devNotifier.Notify($"Failed to process pending welcome (chat ID: {pending.ChatId}, user ID: {pending.UserId}, first name: {pending.FirstName}): {ex}");
